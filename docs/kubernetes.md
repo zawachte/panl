@@ -2,17 +2,13 @@
 
 Kubernetes is the primary deployment target. One replica serves the read-only viewer, authenticated agent API/MCP, and SQLite-backed dashboard definitions. It queries an existing Prometheus-compatible endpoint; it does not require Kubernetes API credentials.
 
-## Build and install
+## Install
 
-Until a public image is published, build from this checkout and push it to your own registry:
+The chart and container image are published to GitHub Container Registry:
 
 ```sh
-docker build -t YOUR_REGISTRY/panl:0.1.0 .
-docker push YOUR_REGISTRY/panl:0.1.0
-helm upgrade --install panl ./deploy/helm/panl \
+helm upgrade --install panl oci://ghcr.io/zawachte/charts/panl --version 0.1.0 \
   --namespace panl --create-namespace \
-  --set image.repository=YOUR_REGISTRY/panl \
-  --set image.tag=0.1.0 \
   --set prometheus.url=http://prometheus-operated.monitoring.svc.cluster.local:9090 \
   --wait
 kubectl -n panl port-forward svc/panl 8080:8080
@@ -20,10 +16,11 @@ kubectl -n panl port-forward svc/panl 8080:8080
 
 Open http://localhost:8080. Change the Prometheus URL to match your cluster. The bundled namespace dashboard expects cAdvisor metrics from kubelet and kube-state-metrics. Agents can build dashboards for any available PromQL metrics.
 
-For kind, load the image instead of pushing it:
+For an offline kind cluster, pull and load the image:
 
 ```sh
-kind load docker-image YOUR_REGISTRY/panl:0.1.0 --name YOUR_CLUSTER
+docker pull ghcr.io/zawachte/panl:0.1.0
+kind load docker-image ghcr.io/zawachte/panl:0.1.0 --name YOUR_CLUSTER
 ```
 
 For Podman-backed kind, use `podman save --format docker-archive` followed by `KIND_EXPERIMENTAL_PROVIDER=podman kind load image-archive`.
@@ -42,7 +39,7 @@ For GitOps, provide a Secret yourself so offline Helm rendering cannot regenerat
 
 ```sh
 kubectl -n panl create secret generic panl-credentials --from-literal=token="$(openssl rand -hex 32)"
-helm upgrade --install panl ./deploy/helm/panl -n panl \
+helm upgrade --install panl oci://ghcr.io/zawachte/charts/panl --version 0.1.0 -n panl \
   --reuse-values --set agent.existingSecret=panl-credentials
 ```
 
@@ -83,9 +80,8 @@ The viewer exposes metrics to anyone who can reach it. Use your existing Ingress
 ## Demo without Prometheus
 
 ```sh
-helm upgrade --install panl-demo ./deploy/helm/panl \
+helm upgrade --install panl-demo oci://ghcr.io/zawachte/charts/panl --version 0.1.0 \
   --namespace panl-demo --create-namespace \
-  --set image.repository=YOUR_REGISTRY/panl --set image.tag=0.1.0 \
   --set demo=true --set readOnly=true \
   --set persistence.enabled=false --wait
 kubectl -n panl-demo port-forward svc/panl-demo 8081:8080
@@ -98,7 +94,7 @@ Set `seed=none` for an empty workspace that your agent populates from scratch.
 For a quick local look at the same demo image before installing a cluster:
 
 ```sh
-docker run --rm -p 127.0.0.1:8080:8080 YOUR_REGISTRY/panl:0.1.0 --demo --read-only
+docker run --rm -p 127.0.0.1:8080:8080 ghcr.io/zawachte/panl:0.1.0 --demo --read-only
 ```
 
 This local demo is ephemeral; Kubernetes with a PVC remains the primary deployment path.

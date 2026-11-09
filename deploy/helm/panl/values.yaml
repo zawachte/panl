@@ -1,7 +1,7 @@
 # Override only when preserving an existing deployment selector during a rename.
 nameOverride: ""
 image:
-  repository: panl
+  repository: ghcr.io/zawachte/panl
   tag: "0.1.0"
   pullPolicy: IfNotPresent
 imagePullSecrets: []

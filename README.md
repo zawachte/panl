@@ -8,14 +8,11 @@ PromQL time series, a quiet read-only UI, and an authenticated MCP interface for
 
 ## Deploy to Kubernetes
 
-Build an image and install the Helm chart:
+Install the published Helm chart:
 
 ```sh
-docker build -t YOUR_REGISTRY/panl:0.1.0 .
-docker push YOUR_REGISTRY/panl:0.1.0
-helm upgrade --install panl ./deploy/helm/panl \
+helm upgrade --install panl oci://ghcr.io/zawachte/charts/panl --version 0.1.0 \
   --namespace panl --create-namespace \
-  --set image.repository=YOUR_REGISTRY/panl --set image.tag=0.1.0 \
   --set prometheus.url=http://prometheus-operated.monitoring.svc.cluster.local:9090 \
   --wait
 kubectl -n panl port-forward svc/panl 8080:8080
@@ -23,7 +20,7 @@ kubectl -n panl port-forward svc/panl 8080:8080
 
 Open http://localhost:8080. [Full deployment instructions](docs/kubernetes.md), including persistent storage, Prometheus credentials, Ingress, and a demo that needs no Prometheus.
 
-A public image/chart registry is not published yet; the source build above is the current installation path.
+The image supports Linux AMD64 and ARM64: `ghcr.io/zawachte/panl:0.1.0`.
 
 ## Ask your agent
 
