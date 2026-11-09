@@ -1,6 +1,6 @@
 # Release readiness
 
-Status: **locally verified release candidate; publication and independent-user validation remain**.
+Status: **published release candidate; independent-user validation remains**.
 
 The project name is Panl. Kubernetes is the primary distribution/deployment path. The human UI is read-only; agents own all dashboard configuration.
 
@@ -33,10 +33,10 @@ The browser walkthrough is scripted against actual MCP and the real Prometheus q
 ## Before a Show HN submission
 
 - [x] Choose the project name: Panl.
-- [ ] Confirm repository destination for publication.
-- [ ] Confirm the proposed Apache-2.0 licensing choice.
-- [ ] Publish source, image, and chart; replace source-build instructions with a tested public-image install command.
-- [ ] Run CI on the actual repository (the workflow has been exercised locally in its component parts, not on GitHub's runners).
+- [x] Publish source at [zawachte/panl](https://github.com/zawachte/panl).
+- [x] Include the Apache-2.0 license.
+- [x] Publish `ghcr.io/zawachte/panl:0.1.0` (AMD64/ARM64) and `oci://ghcr.io/zawachte/charts/panl:0.1.0`; verify anonymous pulls and a fresh Helm install, real demo queries, authentication, and PVC/credential recovery. [Publishing run](https://github.com/zawachte/panl/actions/runs/42554526334).
+- [x] Pass [GitHub CI](https://github.com/zawachte/panl/actions/runs/42553694702), including browser checks and a fresh kind installation.
 - [ ] Ask at least two unfamiliar users to deploy on their own clusters and configure their preferred agents without developer guidance.
 - [ ] Validate the documented Codex and Claude Code connection recipes in those users' actual clients.
 - [ ] Make a reachable read-only demo or publish the recording with an easy local/Kubernetes demo command.
