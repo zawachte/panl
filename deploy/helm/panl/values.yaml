@@ -1,0 +1,42 @@
+# Override only when preserving an existing deployment selector during a rename.
+nameOverride: ""
+image:
+  repository: panl
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+prometheus:
+  url: http://prometheus-operated.monitoring.svc.cluster.local:9090
+  # Existing Secret containing the key "token" for upstream bearer authentication.
+  existingSecret: ""
+agent:
+  # An existing Secret with key "token". Otherwise the chart generates one.
+  existingSecret: ""
+# Public demos can disable all agent access; the human UI is always read-only.
+readOnly: false
+demo: false
+seed: kubernetes
+persistence:
+  enabled: true
+  size: 1Gi
+  storageClass: ""
+  existingClaim: ""
+service:
+  type: ClusterIP
+  port: 8080
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  host: panl.local
+  tls: []
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: "1"
+    memory: 512Mi
+nodeSelector: {}
+tolerations: []
+affinity: {}

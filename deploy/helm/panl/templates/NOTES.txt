@@ -1,0 +1,15 @@
+Panl is a read-only dashboard viewer. Agents configure it over authenticated MCP.
+
+Open the viewer:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "panl.name" . }} 8080:{{ .Values.service.port }}
+  http://localhost:8080
+
+{{- if not .Values.readOnly }}
+Agent MCP URL: http://localhost:8080/mcp
+Read the agent token (keep it out of browser URLs and source control):
+  kubectl -n {{ .Release.Namespace }} get secret {{ include "panl.agentSecret" . }} -o jsonpath='{.data.token}' | base64 --decode
+
+Use Authorization: Bearer <token> for MCP and dashboard mutation requests.
+{{- else }}
+This instance has all configuration access disabled.
+{{- end }}

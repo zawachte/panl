@@ -1,0 +1,40 @@
+{
+  "description": "Created and refined entirely through authenticated MCP",
+  "id": "namespace-resources",
+  "panels": [
+    {
+      "id": "cpu",
+      "queries": [
+        {
+          "expr": "sum by (namespace, pod) (rate(container_cpu_usage_seconds_total{namespace=~\"$namespace\",container!=\"\",container!=\"POD\",image!=\"\"}[5m]))",
+          "legend": "{{pod}}"
+        },
+        {
+          "expr": "sum by (namespace, pod) (kube_pod_container_resource_requests{namespace=~\"$namespace\",resource=\"cpu\"})",
+          "kind": "request",
+          "legend": "request \u00b7 {{pod}}"
+        },
+        {
+          "expr": "sum by (namespace, pod) (kube_pod_container_resource_limits{namespace=~\"$namespace\",resource=\"cpu\"})",
+          "kind": "limit",
+          "legend": "limit \u00b7 {{pod}}"
+        }
+      ],
+      "title": "CPU usage, requests & limits",
+      "unit": "cores"
+    },
+    {
+      "id": "memory",
+      "queries": [
+        {
+          "expr": "sum by(namespace) (container_memory_working_set_bytes{namespace=~\"$namespace\",container!=\"\",container!=\"POD\",image!=\"\"})",
+          "legend": "{{namespace}}"
+        }
+      ],
+      "title": "Memory by namespace",
+      "unit": "bytes"
+    }
+  ],
+  "revision": 0,
+  "title": "Namespace resources"
+}

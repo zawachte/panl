@@ -1,0 +1,17 @@
+.git
+.codex
+web/node_modules
+web/dist
+web/test-results
+web/playwright-report
+web/*.tsbuildinfo
+dev
+data
+artifacts
+*.db*
+agent-token
+panl
+panl
+
+observe
+promql-tui

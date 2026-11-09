@@ -1,0 +1,48 @@
+name: Verify
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.3'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci && npm test && npm run build
+        working-directory: web
+      - run: go test -race ./... && go vet ./... && go build -o panl .
+      - run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 ./...
+      - run: npx playwright install --with-deps chromium && npx playwright test
+        working-directory: web
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-traces
+          path: web/test-results
+  kubernetes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.27.3'
+      - uses: azure/setup-helm@v4.3.0
+      - run: go install sigs.k8s.io/kind@v0.30.0
+      - run: docker build -t panl:ci .
+      - run: |
+          kind create cluster --name panl-ci --wait 120s
+          kind load docker-image panl:ci --name panl-ci
+          helm lint deploy/helm/panl
+          helm install panl deploy/helm/panl --namespace panl --create-namespace --set image.repository=panl --set image.tag=ci --set demo=true --set seed=none --wait --timeout 180s
+          kubectl -n panl port-forward svc/panl 8080:8080 > /tmp/panl-forward.log 2>&1 &
+          echo $! > /tmp/panl-forward.pid
+      - run: python3 scripts/kubernetes-smoke.py
+      - if: always()
+        run: kubectl get pods -A && kubectl -n panl logs deploy/panl
