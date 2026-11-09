@@ -11,12 +11,12 @@ export default defineConfig({
   },
   webServer: [{
     command:
-      "../panl --serve --listen 127.0.0.1:18080 --db /tmp/panl-e2e-dashboard.db --web-dist dist --demo",
+      "../panl --listen 127.0.0.1:18080 --db /tmp/panl-e2e-dashboard.db --web-dist dist --demo",
     url: "http://127.0.0.1:18080",
     reuseExistingServer: false,
     env: { PANL_AGENT_TOKEN: "playwright-agent-token-for-local-tests" },
   },{
- command:`../panl --serve --listen 127.0.0.1:18085 --db /tmp/panl-agent-e2e-${randomUUID()}.db --web-dist dist --demo --seed none`,
+ command:`../panl --listen 127.0.0.1:18085 --db /tmp/panl-agent-e2e-${randomUUID()}.db --web-dist dist --demo --seed none`,
  url:"http://127.0.0.1:18085",reuseExistingServer:false,env:{PANL_AGENT_TOKEN:"playwright-agent-token-for-local-tests"}
  }],
 });

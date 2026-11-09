@@ -1,6 +1,6 @@
 # Panl
 
-This repository contains a minimal Kubernetes/PromQL web dashboard and its earlier TUI prototype.
+This repository contains a minimal Kubernetes/PromQL web dashboard.
 
 - Human UI: http://127.0.0.1:8080
 - Native MCP endpoint: http://127.0.0.1:8080/mcp (Streamable HTTP)

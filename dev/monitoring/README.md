@@ -3,29 +3,15 @@
 Single-node kind v1.34.0 cluster named `promql`, using rootless Podman. kube-prometheus-stack chart **93.1.0**, release `monitoring`, namespace `monitoring`.
 
 Prometheus: http://127.0.0.1:19090 (9090 is used by Cockpit on this host).
-Grafana: http://127.0.0.1:3000, username `admin`; generated password is in the ignored `grafana-admin-password` file beside this README.
+Grafana (optional reference): http://127.0.0.1:3000, username `admin`; retrieve its generated password using the command below.
 
-Start the TUI with real namespace CPU metrics:
+Run Panl against this stack after building it with `make build`:
 
 ```sh
-# From the repository root
-./dev/monitoring/explore.sh
+./panl --endpoint http://127.0.0.1:19090
 ```
 
-Press Ctrl+R, then Esc to navigate. Allow a few minutes after installation for rate queries to accumulate samples. Start with `up` if rate queries are still empty. There is no port-forward process to keep alive: kind maps localhost ports to the services' NodePorts.
-
-Queries to try:
-
-```promql
-up
-sum by (namespace) (rate(container_cpu_usage_seconds_total{container!="",container!="POD"}[2m]))
-sum by (namespace) (container_memory_working_set_bytes{container!="",container!="POD"})
-rate(prometheus_http_requests_total[2m])
-rate(node_network_receive_bytes_total{device!="lo"}[2m])
-kube_pod_status_phase{phase="Running"}
-```
-
-For A/B, duplicate with `b`, switch to B, edit a different expression, and rerun. Use comparable units: e.g. CPU usage in `monitoring` versus `kube-system`.
+Open http://127.0.0.1:8080. Allow a few minutes after installation for rate queries to accumulate samples. Agents can discover and query metrics through Panl's MCP endpoint; see [agent setup](../../docs/agents.md).
 
 The kubeconfig is isolated in this directory. To inspect:
 

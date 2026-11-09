@@ -21,5 +21,5 @@ COPY --from=web /src/web/dist /app/web
 USER 10001:10001
 WORKDIR /app
 EXPOSE 8080
-ENTRYPOINT ["/usr/local/bin/panl", "--serve", "--listen=0.0.0.0:8080", "--db=/data/dashboards.db", "--web-dist=/app/web"]
+ENTRYPOINT ["/usr/local/bin/panl", "--listen=0.0.0.0:8080", "--db=/data/dashboards.db", "--web-dist=/app/web"]
 CMD []
